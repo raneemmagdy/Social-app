@@ -86,8 +86,8 @@ Server will be running at `http://localhost:3000`
 - `PATCH /:commentId` - Update a comment
 - `DELETE /:commentId` - Delete a comment
   
-## 📌 Explore the full API documentation on Postman:
-🔗 [Postman Documentation](https://documenter.getpostman.com/view/26311189/2sAYQdjpve)
+_For a full list of endpoints and usage examples, check out the [Postman Docs](https://documenter.getpostman.com/view/26311189/2sAYQdjpve)._ 🚀
+
 
 ## 🔐 Security Features
 - **JWT Authentication:** Ensures secure access to user accounts.
