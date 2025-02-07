@@ -52,15 +52,12 @@ export const updateProfileSchema=Joi.object({
     name: Joi.string().min(3).max(30).messages({
         'string.min': 'Name must be more than 3 characters.',
         'string.max': 'Name must be less than 30 characters.',
-        'any.required': 'Name is required.'
     }),
     phone: Joi.string().regex(/^01[0125][0-9]{8}$/).messages({
         'string.pattern.base': 'Phone number must be an Egyptian number and start with 010, 011, 012, or 015 followed by 8 digits.',
-        'any.required': 'Phone number is required.'
     }),
     gender: Joi.string().valid(genderOptions.female,genderOptions.male).messages({
         'any.only': 'Gender must be either male or female.',
-        'any.required': 'Gender is required.'
     }),
    
     profileImage: Joi.object({
@@ -76,7 +73,7 @@ export const updateProfileSchema=Joi.object({
         )
 
     
-}).required()
+})
 
 
 
@@ -122,6 +119,14 @@ export const shareProfilesSchema=Joi.object({
 })
 export const emailSchema=Joi.object({ 
     email:  generalRules.email.required(),
+   
+})
+export const updateRoleSchema=Joi.object({ 
+    userId:  generalRules.ObjectId.required(),
+    role: Joi.string().valid(roleOptions.user,roleOptions.admin).required().messages({
+        'any.only': 'Role must be either user or admin.',
+        'any.required': 'Role is required.'
+    })
    
 })
 export const replaceEmailSchema=Joi.object({ 

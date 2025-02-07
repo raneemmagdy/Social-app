@@ -1,8 +1,8 @@
 import Joi from "joi";
 import { generalRules } from "../../utils/index.js";
 
-//-------------------------------------------------CreatePostschema
-export const postValidationSchema = Joi.object({
+//-------------------------------------------------createCommentSchema
+export const createCommentSchema = Joi.object({
     content: Joi.string()
         .min(3)
         .required()
@@ -12,6 +12,8 @@ export const postValidationSchema = Joi.object({
             'string.min': 'Content should have a minimum length of 3 characters',
             'any.required': 'Content is required'
         }),
+    postId:generalRules.ObjectId.required(),
+    commentId:generalRules.ObjectId,
     media: Joi.array()
             .items(
               Joi.object({
@@ -21,20 +23,15 @@ export const postValidationSchema = Joi.object({
             )
             .optional().default([]),
 });
-
-//-------------------------------------------------updatePostSchema
-export const updatePostSchema = Joi.object({
+//-------------------------------------------------updateCommentSchema
+export const updateCommentSchema = Joi.object({
     content: Joi.string()
         .min(3)
         .messages({
-            'string.base': 'Content should be a type of text',
-            'string.empty': 'Content cannot be an empty field',
             'string.min': 'Content should have a minimum length of 3 characters',
-            'any.required': 'Content is required'
         }),
-     postId: generalRules.ObjectId.required().messages({
-            'any.required': 'postId is required'
-        }),
+    postId:generalRules.ObjectId.required(),
+    commentId:generalRules.ObjectId.required(),
     media: Joi.array()
             .items(
               Joi.object({
@@ -42,13 +39,12 @@ export const updatePostSchema = Joi.object({
                 secure_url: Joi.string().uri().required(),
               })
             )
-            .optional(),
+            .optional().default([]),
 });
+//-------------------------------------------------freezeCommentSchema
+export const freezeCommentSchema = Joi.object({
 
-
-//-------------------------------------------------idSchema
-export const idSchema = Joi.object({
-    postId: generalRules.ObjectId.required().messages({
-            'any.required': 'postId is required'
-    }),
+    postId:generalRules.ObjectId.required(),
+    commentId:generalRules.ObjectId.required(),
+  
 });

@@ -5,6 +5,8 @@ export * from './generalRules/index.js'
 export * from './EmailEvent/index.js'
 export * from './otpFunctions/index.js'
 export * from './Cloudinary/index.js'
+export * from './Pagination/index.js'
+
 
 
 

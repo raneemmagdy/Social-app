@@ -1,5 +1,5 @@
 import {OAuth2Client} from 'google-auth-library'
-import  { userModel,providerOptions } from '../../DB/models/index.js';
+import  { userModel,providerOptions, postModel } from '../../DB/models/index.js';
 import { roleOptions } from '../../middleware/authorization.js';
 import * as module from '../../utils/index.js';
 import cloudinary from '../../utils/Cloudinary/index.js';
@@ -552,7 +552,7 @@ export const replaceEmail=async(req,res,next)=>{
   const { oldCode,newCode} = req.body;
   const user = await userModel.findById({_id:req.user._id});
   if (!user) {
-    return next(new Error('User Not Found', { cause: 400 }));
+    return next(new Error('User Not Found', { cause: 404 }));
   }
   if(user.isDeleted){
     return next(new Error('Account has been deleted', { cause: 400 }));
@@ -568,3 +568,109 @@ export const replaceEmail=async(req,res,next)=>{
 
   return res.status(200).json({ message: 'Email Replaced Successfully' });
 }
+
+
+
+
+//-------------------------------------------------sendFriendRequest
+
+export const sendFriendRequest = async (req, res,next) => {
+
+  const { friendId } = req.params;
+  const userId = req.user._id;
+
+  const friend = await userModel.findById(friendId);
+  if (!friend) return next(new Error('User not found',{cause:404}))
+
+  if (friend.friendRequests.includes(userId)) {
+      return next(new Error("Friend request already sent",{cause:400}))
+  }
+  if (friend.friends.includes(userId)) {
+      return next(new Error("User is already a friend",{cause:400}))
+  }
+  friend.friendRequests.push(userId);
+  await friend.save();
+  module.emailEvent.emit("sendEmailFriendRequest",{email:friend.email,friendName:req.user.name,name:friend.name})
+  return res.status(200).json({ message: "Friend request sent successfully" });
+
+};
+//-------------------------------------------------acceptFriendRequest
+
+export const acceptFriendRequest = async (req, res,next) => {
+
+const { requesterId } = req.params;
+const userId = req.user._id;
+
+const user = await userModel.findById(userId);
+const requester = await userModel.findById(requesterId);
+
+if (!user || !requester) return next(new Error('User not found',{cause:404}))
+
+
+if (!user.friendRequests.includes(requesterId)) {
+  return next(new Error('No friend request from this user',{cause:400}))
+}
+
+user.friendRequests = user.friendRequests.filter(id => id.toString() !== requesterId);
+user.friends.push(requesterId);
+requester.friends.push(userId);
+
+await user.save();
+await requester.save();
+
+return res.status(200).json({ message: "Friend request accepted successfully" });
+
+};
+
+//-------------------------------------------------rejectFriendRequest
+
+export const rejectFriendRequest = async (req, res, next) => {
+  const { requesterId } = req.params;
+  const userId = req.user._id;
+  const user = await userModel.findById(userId);
+  const requester = await userModel.findById(requesterId);
+  if (!user || !requester) {
+      return next(new Error('User or requester not found', { cause: 404 }));
+  }
+  if (!user.friendRequests.includes(requesterId)) {
+      return next(new Error('No friend request from this user', { cause: 400 }));
+  }
+  user.friendRequests = user.friendRequests.filter(id => id.toString() !== requesterId);
+ 
+  await user.save();
+
+  return res.status(200).json({ message: 'Friend request rejected successfully' });
+};
+
+
+//------------------------------------------------dashboard
+export const dashboard=async(req,res,next)=>{
+  const data=await Promise.all([ 
+    userModel.find(),
+    postModel.find()
+ ])
+ return res.status(200).json({message:"Done",data})
+}
+
+
+
+//------------------------------------------------updateRole
+export const updateRole=async(req,res,next)=>{
+  const {userId}= req.params
+  const {role}=req.body
+  const data=req.user.role==='superAdmin'?{role:{$nin:[roleOptions.superAdmin]}}:
+  {role:{$nin:[roleOptions.superAdmin,roleOptions.admin]}}
+  const user= await userModel.findByIdAndUpdate({_id:userId,isDeleted:false,...data},{
+     role,
+     updatedBy:req.user._id
+  },{new:1})
+
+  if(!user){
+    
+    return next(new Error("Account has been deleted Or User Not Found", { cause: 400 }));
+  }
+ return res.status(200).json({message:"Role Updated Successfully",user})
+}
+
+
+

@@ -2,7 +2,8 @@ import { asyncHandler } from "../utils/index.js"
 
 export const roleOptions={
     user:'user',
-    admin:'admin'
+    admin:'admin',
+    superAdmin:'superAdmin'
 }
 
 const authorization=(accessRoles=[])=>{

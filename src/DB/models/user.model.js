@@ -67,8 +67,10 @@ const userSchema= new mongoose.Schema({
         type:String,
         enum:Object.values(providerOptions),
         default:providerOptions.application
-    }
-    ,
+    },
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], 
+    friendRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    updatedBy: { type: mongoose.Schema.Types.ObjectId}, 
     profileViews: [
         {
             viewerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

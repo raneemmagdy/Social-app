@@ -3,8 +3,9 @@ import validation from "../../middleware/validation.js";
 import { asyncHandler } from "../../utils/index.js";
 import * as userValidation from './user.validation.js'
 import * as userServices from './user.service.js'
-import { formatOptions, multerHost, multerLocal } from "../../middleware/multer.js";
+import { formatOptions, multerHost } from "../../middleware/multer.js";
 import authentication from "../../middleware/authentication.js";
+import authorization, { roleOptions } from "../../middleware/authorization.js";
 
 const userRouter=Router()
 userRouter.post('/signInWithGmail',validation(userValidation.signInWithGmailSchema),asyncHandler(userServices.signInWithGmail))
@@ -23,7 +24,10 @@ userRouter.post('/blockUser', validation(userValidation.emailSchema),authenticat
 userRouter.post('/enableTwoStepVerification',authentication,asyncHandler(userServices.enableTwoStepVerification));
 userRouter.patch('/verifyTwoStepVerification',validation(userValidation.verifyTwoStepVerificationSchema),authentication,asyncHandler(userServices.verifyTwoStepVerification));
 userRouter.post('/loginConfirmation',validation(userValidation.confirmSchema),asyncHandler(userServices.loginConfirmation));
-
-
+userRouter.post('/friends/request/:friendId', authentication, asyncHandler(userServices.sendFriendRequest)); 
+userRouter.post('/friends/accept/:requesterId', authentication,asyncHandler(userServices.acceptFriendRequest) ); 
+userRouter.post('/friends/reject/:requesterId', authentication,asyncHandler(userServices.rejectFriendRequest) ); 
+userRouter.get('/dashboard', authentication,authorization([roleOptions.admin,roleOptions.superAdmin]),asyncHandler(userServices.dashboard) ); 
+userRouter.patch('/updateRole/:userId', validation(userValidation.updateRoleSchema),authentication,authorization([roleOptions.admin,roleOptions.superAdmin]),asyncHandler(userServices.updateRole) ); 
 
 export default userRouter

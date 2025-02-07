@@ -24,6 +24,22 @@ emailEvent.on("sendEmailConfirm", async (data) => {
   success? await userModel.updateOne({email},{otpCreatedAt:Date.now()}): next(new Error('Error in Sending Email...'))
   
 });
+emailEvent.on("sendEmailFriendRequest", async (data) => {
+  const {email,name,friendName}=data
+ 
+  await sedEmailByNodeMailer(
+    "Friend Request",
+    emailTemplate(
+      "Friend Request",
+      name,
+     `<p><strong>${friendName}</strong> has sent you a friend request on <strong>Social Media</strong>.</p>
+      <p>Best,<br>The Social Media Team</p>`
+    ),
+    email
+  );
+
+ 
+});
 emailEvent.on("sendEmailConfirmForNewEmail", async (data) => {
   let { name, email,id } = data;
   const otp = customAlphabet('0123456789',4)();

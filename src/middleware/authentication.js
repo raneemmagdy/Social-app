@@ -12,10 +12,10 @@ export const decodedToken=async({authorization,tokenType,next})=>{
     const [prefix,token]=authorization.split(' ')
 
     if(!prefix){
-        return next(new Error('Token prefix not found', { cause: 400 }));
+        return next(new Error('Token prefix not found', { cause: 404 }));
     }
     if(!token){
-        return next(new Error('Token not found', { cause: 401 }));
+        return next(new Error('Token not found', { cause: 404 }));
     }
     let JWT_SECRET=undefined
     if(prefix==process.env.PREFIX_FOR_USER){
