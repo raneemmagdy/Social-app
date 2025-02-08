@@ -6,6 +6,8 @@ import { globalErrorHandling } from './utils/index.js'
 import postRouter from './modules/post/post.controller.js'
 import commentRouter from './modules/comment/comment.controller.js'
 import {rateLimit} from 'express-rate-limit'
+import helmet from 'helmet'
+import morgan from 'morgan'
 const limiter=rateLimit({
     limit:5,
     windowMs:60*1000,
@@ -15,6 +17,8 @@ const limiter=rateLimit({
 
 })
 const bootstrap=(app,express)=>{
+    app.use(morgan('combined'))
+    app.use(helmet())
     app.use(cors())
     app.use(limiter)
     app.use('/uploads',express.static(path.resolve('uploads')))

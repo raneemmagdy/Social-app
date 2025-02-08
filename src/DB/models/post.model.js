@@ -56,7 +56,7 @@ postSchema.virtual('comments',{
 
 postSchema.pre('findOneAndUpdate', async function (next) {
     const update = this.getUpdate();
-    console.log(update);
+
     
     if (update.isDeleted) {
      
@@ -65,7 +65,7 @@ postSchema.pre('findOneAndUpdate', async function (next) {
             { $set: { isDeleted: true } }    
         );
     }
-    // console.log('Hello from pre ')
+   
     next();
 });
 

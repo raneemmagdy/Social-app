@@ -91,7 +91,7 @@ export const freezePost = async (req, res, next) => {
   if (!post) {
       return next(new Error('Post Not Found', { cause: 404 }));
   }
-  console.log(req.user.role);
+
   
   if (post.createdBy.toString() !== req.user._id.toString() && req.user.role !==roleOptions.admin ) {
       return next(new Error('You are not authorized to freeze this post', { cause: 403 }));
@@ -147,7 +147,6 @@ export const likeOrUnlikePost = async (req, res, next) => {
   let updatedPost=undefined;
   let action=undefined;
 
-  console.log(post.likes);
   
   if(post.likes.includes(req.user._id)){
       updatedPost= await postModel.findByIdAndUpdate({_id:postId},{$pull:{likes:req.user._id}},{new:1})
@@ -208,8 +207,7 @@ export const undoPost = async (req, res, next) => {
     const postCreationTime = post.createdAt.getTime();
     const currentTime = Date.now();
 
-    // console.log(postCreationTime);
-    // console.log(currentTime);
+
 
     
     const timeDifference = currentTime - postCreationTime;
@@ -295,14 +293,14 @@ export const getFriendsPublicPosts = async (req, res, next) => {
    
   const userId = req.user._id;
   const user = await userModel.findById(userId)
-  console.log(user);
+
   
 
   if (!user) {
       return next(new Error("User not found", { cause: 404 }));
   }
   const friendIds = user.friends.map(friend => friend._id);
-  console.log(friendIds);
+
   
   const publicPosts = await postModel.find({
       createdBy: { $in: friendIds }, 

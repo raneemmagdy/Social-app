@@ -73,10 +73,7 @@ export const signUp=async(req,res,next)=>{
            pathForProfileImage = { public_id, secure_url };
      }
    }
-   console.log('Body:', req.body);
-   console.log('Files:', req.files);
-   console.log(pathsForCoverImages);
-   console.log(pathForProfileImage);
+ 
 
    const hashPassword= await module.Hash({key:password,SALT_ROUND:process.env.SALT_ROUND})
    const encryptPhone= await module.Encrypt({key:phone,SECRET_KEY:process.env.SECRET_KEY_PHONE})
@@ -182,8 +179,7 @@ export const refreshTokenCheck=async(req,res,next)=>{
    if (user.changedPasswordAt) {
       const tokenIssuedAt = payload.iat ; 
       const changedPasswordAt = parseInt(user.changedPasswordAt.getTime()/1000);
-      console.log(tokenIssuedAt);
-      console.log(changedPasswordAt);
+    
 
    
       if (tokenIssuedAt <=changedPasswordAt) {
@@ -505,7 +501,7 @@ export const shareProfile = async (req, res, next) => {
   const viewerExist = profileUser.profileViews.find(
     (viewer) => viewer.viewerId.toString() === viewerId.toString()
   );
-  // console.log(viewerExist);
+
 
   if (viewerExist) {
     viewerExist.viewedAt.push(Date.now());
@@ -515,7 +511,7 @@ export const shareProfile = async (req, res, next) => {
         const formattedViewTimes = viewerExist.viewedAt
         .map((date) => date.toLocaleString())
         
-       console.log(formattedViewTimes);
+    
        
        module.emailEvent.emit('sendEmailForViews',{name:profileUser.name,email:profileUser.email,viewerId,viewTimes:formattedViewTimes})
       }
