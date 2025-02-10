@@ -10,7 +10,8 @@ Check out the live version of the app:
 ## 📌 API Documentation
 Explore the full API documentation on Postman:
 🔗 [Postman Documentation](https://documenter.getpostman.com/view/26311189/2sAYQdjpve)
-🔗 [GraphQl Documentation](https://social-media-1gu9amd6z-raneemmagdys-projects.vercel.app/playground)
+Explore the full API documentation For GraphQl:
+🔗 [GraphQl Documentation](https://social-media-app-iota-sable.vercel.app/playground)
 
 ## 🛠️ Tech Stack
 - **Backend:** Node.js, Express.js, MongoDB
