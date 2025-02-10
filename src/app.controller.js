@@ -8,6 +8,10 @@ import commentRouter from './modules/comment/comment.controller.js'
 import {rateLimit} from 'express-rate-limit'
 import helmet from 'helmet'
 import morgan from 'morgan'
+import { createHandler } from 'graphql-http/lib/use/express';
+import { schema } from './modules/graphQlSchema.js'
+import expressPlayground from 'graphql-playground-middleware-express'
+
 const limiter=rateLimit({
     limit:5,
     windowMs:60*1000,
@@ -29,6 +33,8 @@ const bootstrap=(app,express)=>{
     app.use('/posts',postRouter)
     app.use('/comments',commentRouter)
 
+   app.use('/graphql',createHandler({schema:schema}))
+   app.get('/playground', expressPlayground.default({ endpoint: '/graphql' }))
 
     app.get('/',(req,res,next)=>{
         return res.status(200).json({message:"Welcome To My Social Media App"})
